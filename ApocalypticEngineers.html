@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Apocalyptic Engineers</title>
+    <style>
+        canvas {
+            border: 10px solid #000000;
+            width: 1200;
+            height: 902;
+            display: inline;
+        }
+
+        div {
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 50px;
+            margin-top: 0px;
+            margin-bottom: 5px;
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+        }
+
+        body {
+            background-color: #f96;
+            text-decoration: underline;
+        }
+
+        button {
+            padding: 25px 60px;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            font-size: 20px;
+            border: 2px solid #f60;
+            border-radius: 4px;
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+            font-size: 25px;
+        }
+
+        button:hover {
+            background-color: #f60;
+            color: white;
+        }
+
+        #button-containe {
+            text-align: center;
+        }
+
+        #button1 {
+            margin-right: 50px;
+        }
+
+        #button3 {
+            margin-left: 50px;
+        }
+    </style>
+</head>
+
+<body onload="startScreen()">
+    <h1> Apocalyptic Engineers</h1>
+    <div>
+        <canvas id="canvasBasics" width="1200" height="902"></canvas>
+    </div>
+    
+    <div id="button-containe">
+    <button id="button1" onclick="startGame()">Start</button><button id="button2" onclick="howTo()">How to Play</button><button id="button3" onclick="reset()">Reset</button>
+    </div>
+
+    <script>
+        //List of aspects I've added:
+        //Home screen and buttons to go to different pages (i.e Instrections and game page)
+        //Being back feature where you must being the scrap to a certain spot
+        //A time limit 
+        //More astetic appeal
+        //More monsters for added difficulty 
+        //New code like while loops and parent functions
+
+        var canvas = document.getElementById("canvasBasics");
+        var ctx = canvas.getContext("2d");
+
+        //Setting the Images
+        var bgReady = false;
+        var bgImage = new Image();
+        bgImage.onload = function () {
+            bgReady = true;
+        };
+        bgImage.src = "Images/wasteland.png";
+
+        var ssReady = false;
+        var ssImage = new Image();
+        ssImage.onload = function () {
+            ssReady = true;
+        };
+        ssImage.src = "Images/StartScreen.png";
+
+        var batReady = false;
+        var batImage = new Image();
+        batImage.onload = function () {
+            batReady = true;
+        };
+        batImage.src = "Images/BatMonster.png";
+
+        var eyeReady = false;
+        var eyeImage = new Image();
+        eyeImage.onload = function () {
+            eyeReady = true;
+        };
+        eyeImage.src = "Images/EyeMonster.png";
+
+        var pcReady = false;
+        var pcImage = new Image();
+        pcImage.onload = function () {
+            pcReady = true;
+        };
+        pcImage.src = "Images/PoliceCar.png";
+
+        var bcReady = false;
+        var bcImage = new Image();
+        bcImage.onload = function () {
+            bcReady = true;
+        };
+        bcImage.src = "Images/BrokenCar.png";
+
+        var scrapReady = false;
+        var scrapImage = new Image();
+        scrapImage.onload = function () {
+            scrapReady = true;
+        };
+        scrapImage.src = "Images/ScrapMetal.png";
+
+        var truckReady = false;
+        var truckImage = new Image();
+        truckImage.onload = function () {
+            truckReady = true;
+        };
+        truckImage.src = "Images/Truck.png";
+
+        var playerReady = false;
+        var playerImage = new Image();
+        playerImage.onload = function () {
+            playerReady = true;
+        };
+        playerImage.src = "Images/Player.png";
+
+        var worker1Ready = false;
+        var worker1Image = new Image();
+        worker1Image.onload = function () {
+            worker1Ready = true;
+        };
+        worker1Image.src = "Images/Worker1.png";
+
+        var worker2Ready = false;
+        var worker2Image = new Image();
+        worker2Image.onload = function () {
+            worker2Ready = true;
+        };
+        worker2Image.src = "Images/Worker2.png";
+
+        var cartReady = false;
+        var cartImage = new Image();
+        cartImage.onload = function () {
+            cartReady = true;
+        };
+        cartImage.src = "Images/Cart.png";
+
+        //Declairing the Variables
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
+
+        function parentLoca() {
+            batLoca();
+            eyeLoca();
+            scrapLoca();
+        }
+
+        function startGame(){
+            masterDraw();
+            parentLoca();
+        }
+
+        //Player Variables
+        var px = 800
+        var py = 80
+        var pdx = 0;			    // set initial speed to 0
+        var pdy = 0;
+        var pspeed = 5;		    // create a variable for speed
+        var plives = 5;		    // create a variable for lives
+
+        //Bat variables
+        //the Bat will move on its own
+        var bx
+        var by
+        var bspeed = 4;
+        var bdx = bspeed - 1;
+        var bdy = bspeed;
+
+        function batLoca() {
+            var batPos = true;
+            while (batPos == true) {
+                bx = Math.floor(Math.random() * (canvasWidth - 160));
+                by = Math.floor(Math.random() * (canvasHeight - 80));
+                if (by > 205) {
+                    batPos = false
+                }
+            }
+        }
+
+        function getBat() {
+            if (px <= (bx + batImage.width) && bx <= (px + playerImage.width)) {
+                if (py <= (by + batImage.height) && by <= (py + playerImage.height)) {
+                    plives = plives - 1;
+                    px = 800;
+                    py = 90;
+                }
+            }
+        }
+
+        //Eye variables
+        //the Eye will move on its own
+        var ex;
+        var ey;
+        var espeed = 4;
+        var edx = espeed;
+        var edy = espeed - 1;
+
+        function eyeLoca() {
+            var eyePos = true;
+            while (eyePos == true) {
+                ex = Math.floor(Math.random() * (canvasWidth - 85));
+                ey = Math.floor(Math.random() * (canvasHeight - 105));
+                if (ey > 205) {
+                    eyePos = false
+                }
+            }
+        }
+
+        function getEye() {
+            if (px <= (ex + eyeImage.width) && ex <= (px + playerImage.width)) {
+                if (py <= (ey + eyeImage.height) && ey <= (py + playerImage.height)) {
+                    plives = plives - 1;
+                    px = 800;
+                    py = 90;
+                }
+            }
+        }
+
+        //Cart Variables
+        var cx = 900
+        var cy = 90
+
+        function getPoint() {
+            if (sx <= (cx + cartImage.width) && cx <= (sx + scrapImage.width)) {
+                if (sy <= (cy + cartImage.height) && cy <= (sy + scrapImage.height)) {
+                    scrapNeeded = scrapNeeded - 1;
+                    scrapLoca();
+                }
+            }
+        }
+
+        // Scrap metal variables
+        // the Scrap metal is stationary so doesn’t need a bdx and bdy
+        var sx;
+        var sy;
+        var scrapNeeded = 10;
+
+        function scrapLoca() {
+            var scrapPos = true;
+            while (scrapPos == true) {
+                sx = Math.floor(Math.random() * (canvasWidth - 65));
+                sy = Math.floor(Math.random() * (canvasHeight - 60));
+                if (sy > 500) {
+                    scrapPos = false
+                }
+            }
+        }
+
+        function getScrap() {
+            if (px <= (sx + scrapImage.width) && sx <= (px + playerImage.width)) {
+                if (py <= (sy + scrapImage.height) && sy <= (py + playerImage.height)) {
+                    sx = px + 25;
+                    sy = py + 60;
+                }
+            }
+        }
+
+        //set variables to use for key presses
+        //these are Boolean variables
+        //they can only be true or false
+        var rightPressed = false;
+        var leftPressed = false;
+        var upPressed = false;
+        var downPressed = false;
+
+        // add something to "listen" for an event
+        //an event is keypress, mouse movement, mouse click etc.
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        // function that is called if a keydown event happens
+        //(i.e. a key on the keyboard was pressed down)
+        // the 'e' parameter is the event
+        // the keycode 39 is the code for the right arrow key
+        function keyDownHandler(e) {
+            if (e.keyCode == 39) {
+                rightPressed = true;
+            } else if (e.keyCode == 37) {
+                leftPressed = true;
+            } else if (e.keyCode == 38) {
+                upPressed = true;
+            } else if (e.keyCode == 40) {
+                downPressed = true;
+            }
+        }
+
+        //function that is called when a keyup event occurs
+        //(i.e. a key on the keyboard was let up)
+        function keyUpHandler(e) {
+            if (e.keyCode == 39) {
+                rightPressed = false;
+            } else if (e.keyCode == 37) {
+                leftPressed = false;
+            } else if (e.keyCode == 38) {
+                upPressed = false;
+            } else if (e.keyCode == 40) {
+                downPressed = false;
+            }
+        }
+
+        // function for displaying scrap
+        function displayScrap() {
+            ctx.font = "26px Calibri";
+            ctx.fillStyle = 'white';
+            var livesStr1 = "Scrap Needed: " + scrapNeeded;
+            ctx.fillText(livesStr1, 525, 55);
+        }
+
+        // function for displaying Lives
+        function displayLives() {
+            ctx.font = "26px Calibri";
+            ctx.fillStyle = 'white';
+            var livesStr2 = "Lives: " + plives;
+            ctx.fillText(livesStr2, 825, 55);
+        }
+
+        // function for displaying Lives
+        function displayTime() {
+            ctx.font = "26px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Time left: " + time
+            ctx.fillText(livesStr3, 1025, 55);
+        }
+
+        // functions for displaying Titles and other text boxez
+        function displayTitle() {
+            ctx.font = "70px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Apocalyptic Engineers!"
+            ctx.fillText(livesStr3, 300, 100);
+        }
+
+        function displaybuttons1() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Press the 'Start' button below to get started!"
+            ctx.fillText(livesStr3, 200, 850);
+        }
+
+        function displaybuttons2() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Press the 'How to play' button for intrusctions,"
+            ctx.fillText(livesStr3, 190, 750);
+        }
+
+        function displaytitleInst() {
+            ctx.font = "70px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Instructions:"
+            ctx.fillText(livesStr3, 425, 150);
+        }
+
+        function displayInst1() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Use the Arrow keys to move up, down, left, and right, "
+            ctx.fillText(livesStr3, 100, 250);
+        }
+
+        function displayInst2() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Collect 10 piece of scrap to repair the truck,"
+            ctx.fillText(livesStr3, 100, 350);
+        }
+
+        function displayInst3() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "Dodge the monsters and don't loose your lives,"
+            ctx.fillText(livesStr3, 100, 450);
+        }
+
+        function displayInst4() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "If you lose all 5 lives or don't collect enough"
+            ctx.fillText(livesStr3, 100, 550);
+        }
+
+        function displayInst4continued() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "white";
+            var livesStr3 = "scrap in 1 mins 20 secs..."
+            ctx.fillText(livesStr3, 100, 650);
+        }
+
+        function displayInst5() {
+            ctx.font = "44px Calibri";
+            ctx.fillStyle = "red";
+            var livesStr3 = "You are out!"
+            ctx.fillText(livesStr3, 100, 750);
+        }
+
+
+        //Code for the timer 
+        var time = 80
+
+        function countDown() {
+            time = time - 1
+        }
+
+        //reset the game 
+        function reset() {
+            plives = 5;
+            scrapNeeded = 10;
+            time = 80;
+            px = 800;
+            py = 80;
+            pdx = 0;
+            pdy = 0;
+            pspeed = 5;
+            rightPressed = false;
+            upPressed = false;
+            leftPressed = false;
+            downPressed = false;
+            eyeLoca();
+            batLoca();
+            scrapLoca();
+        }
+
+        //Start Screen
+        function startScreen() {
+            if (ssReady) {
+                ctx.drawImage(ssImage, 0, 0);
+            }
+            if (truckReady) {
+                ctx.drawImage(truckImage, 200, 450);
+            }
+            if (playerReady) {
+                ctx.drawImage(playerImage, 750, 520);
+            }
+            displayTitle();
+            displaybuttons1();
+            displaybuttons2();
+        }
+
+        //Intrusctions Screen
+        function howTo() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            if (bgReady) {
+                ctx.drawImage(bgImage, 0, 0);
+            }
+            displaytitleInst()
+            displayInst1();
+            displayInst2();
+            displayInst3();
+            displayInst4();
+            displayInst4continued()
+            displayInst5();
+        }
+
+        //Game Screen
+        function masterDraw() {
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            function draw() {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                if (bgReady) {
+                    ctx.drawImage(bgImage, 0, 0);
+                }
+
+                getEye();
+                getBat();
+                getScrap();
+                getPoint();
+
+                if (bgReady) {
+                    ctx.drawImage(bgImage, 0, 0);
+                }
+                if (truckReady) {
+                    ctx.drawImage(truckImage, 10, 15);
+                }
+                if (bcReady) {
+                    ctx.drawImage(bcImage, 30, 250);
+                }
+                if (pcReady) {
+                    ctx.drawImage(pcImage, 800, 400);
+                }
+                if (cartReady) {
+                    ctx.drawImage(cartImage, 900, 90);
+                }
+                if (playerReady) {
+                    ctx.drawImage(playerImage, px, py);
+                }
+                if (worker1Ready) {
+                    ctx.drawImage(worker1Image, 500, 90);
+                }
+                if (worker2Ready) {
+                    ctx.drawImage(worker2Image, 600, 80);
+                }
+                if (scrapReady) {
+                    ctx.drawImage(scrapImage, sx, sy);
+                }
+                if (eyeReady) {
+                    ctx.drawImage(eyeImage, ex, ey);
+                }
+                if (batReady) {
+                    ctx.drawImage(batImage, bx, by);
+                }
+
+                displayScrap();
+                displayLives();
+                displayTime();
+
+                // display alert if person loses 5 lives
+                if (plives == 0) {
+                    alert("Sorry, you are out of lives! Press 'Ok' to try again");
+                    reset();
+                }
+
+                // display alert if person loses 5 lives
+                if ((time == -1) && (scrapNeeded > 0)) {
+                    alert("You did not collect enough scrap and time has ran out! Press 'Ok' to try again");
+                    reset();
+                }
+
+                // display alert if person loses 5 lives
+                if (scrapNeeded == 0) {
+                    alert("You collected enough scrap! Press 'Ok' to play again");
+                    reset();
+                }
+
+                // change the x and y values of the circle by adding dx and dy to them respectively
+                // then each time draw() function is called the circle will be drawn in a different position
+                bx = bx + bdx;
+                by = by + bdy;
+                if (bx <= 0 || bx >= (canvasWidth - batImage.width)) {
+                    bdx = -bdx;
+                }
+                if (by <= 205 || by >= (canvasHeight - batImage.height)) {
+                    bdy = -bdy;
+                }
+                ex = ex + edx;
+                ey = ey + edy;
+                if (ex <= 0 || ex >= (canvasWidth - eyeImage.width)) {
+                    edx = -edx;
+                }
+                if (ey <= 205 || ey >= (canvasHeight - eyeImage.height)) {
+                    edy = -edy;
+                }
+                if (rightPressed == true) {
+                    pdx = pspeed;
+                } else if (leftPressed == true) {
+                    pdx = -pspeed;
+                } else if (upPressed == true) {
+                    pdy = -pspeed;
+                } else if (downPressed == true) {
+                    pdy = pspeed
+                }
+                // if no keys are pressed then set pdx and pdy to 0 (stop moving)
+                if (rightPressed == false && leftPressed == false && upPressed == false && downPressed == false) {
+                    pdx = 0;
+                    pdy = 0;
+                }
+
+                var oldx = px;
+                var oldy = py;
+
+                // change x and y position of player
+                px = px + pdx;
+                py = py + pdy;
+
+                if (px < 0) {
+                    px = oldx
+                }
+                if (py < 0) {
+                    py = oldy
+                }
+                if (px > (canvasWidth - playerImage.width)) {
+                    px = oldx
+                }
+                if (py > (canvasHeight - playerImage.height)) {
+                    py = oldy
+                }
+                if ((px <= 700) && (py <= 205)) {
+                    py = oldy
+                    px = oldx
+                }
+            }
+            setInterval(draw, 10)
+            setInterval(countDown, 1000)
+        }
+
+    </script>
+</body>
+
+</html>
