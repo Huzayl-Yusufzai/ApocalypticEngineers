@@ -1,0 +1,52 @@
+canvas {
+  border: 10px solid #000000;
+  width: 1200;
+  height: 902;
+  display: inline;
+}
+
+div {
+  width: 100%;
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 50px;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  font-family: "Century Gothic", "CenturyGothic", "AppleGothic", sans-serif;
+}
+
+body {
+  background-color: #f96;
+  text-decoration: underline;
+}
+
+button {
+  padding: 25px 60px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  font-size: 20px;
+  border: 2px solid #f60;
+  border-radius: 4px;
+  font-family: "Century Gothic", "CenturyGothic", "AppleGothic", sans-serif;
+  font-size: 25px;
+}
+
+button:hover {
+  background-color: #f60;
+  color: white;
+}
+
+#button-containe {
+  text-align: center;
+}
+
+#button1 {
+  margin-right: 50px;
+}
+
+#button3 {
+  margin-left: 50px;
+}
